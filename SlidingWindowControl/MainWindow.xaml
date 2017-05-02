@@ -6,7 +6,21 @@
         xmlns:local="clr-namespace:SlidingWindowControl"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <TextBlock Text="{Binding ElementName=_slider, Path=RangeMinimum}"/>
+            <TextBlock Text="{Binding ElementName=_slider, Path=RangeMaximum}" Grid.Column="1"/>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        <local:SlidingWindow OverallMinimum="0" OverallMaximum="700"
+                             RangeMinimum="10" RangeMaximum="100"
+                             RangeWindowSize="90" x:Name="_slider"
+                             DockPanel.Dock="Top"/>
+    </DockPanel>
+    
 </Window>
