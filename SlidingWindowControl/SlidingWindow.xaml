@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SlidingWindowControl"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <DockPanel LastChildFill="True">
+    <DockPanel LastChildFill="True" MouseMove="DockPanel_MouseMove">
         <DockPanel.Resources>
             <Style TargetType="{x:Type RepeatButton}">
                 <Setter Property="Opacity" Value="0"/>
@@ -14,7 +14,8 @@
         </DockPanel.Resources>
         
         <RepeatButton Grid.Column="0" HorizontalAlignment="Stretch" Name="_downButton" DockPanel.Dock="Left" Click="_downButton_Click"/>
-        <Grid Grid.Column="1" HorizontalAlignment="Stretch" Name="_thumbGrid" Background="Green" DockPanel.Dock="Left"/>
+        <Grid Grid.Column="1" HorizontalAlignment="Stretch" Name="_thumbGrid" Background="Green" DockPanel.Dock="Left"
+              MouseDown="_thumbGrid_MouseDown" MouseUp="_thumbGrid_MouseUp"/>
         <RepeatButton Grid.Column="2" HorizontalAlignment="Stretch" Name="_upButton" DockPanel.Dock="Right" Click="_upButton_Click" />
     </DockPanel>
 </UserControl>

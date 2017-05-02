@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace SlidingWindowControl
 {
@@ -9,11 +10,33 @@ namespace SlidingWindowControl
     /// </summary>
     public partial class SlidingWindow : UserControl
     {
+        private bool _isMouseDown;
+
         public SlidingWindow()
         {
             InitializeComponent();
 
             this.SizeChanged += SlidingWindow_SizeChanged;
+            this.Loaded += SlidingWindow_Loaded;
+        }
+
+        private void SlidingWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var myWindow = Window.GetWindow(this);
+            if(null != myWindow)
+            {
+                myWindow.MouseLeave += MyWindow_MouseLeave;
+            }
+        }
+
+        private void MyWindow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _isMouseDown = false; 
+            // can probably do this better some other way, hack to deal with the case where
+            // they started dragging, pulled the mouse out of the window, and then released the
+            // button and i didn't hear about it
+
+            // TODO: probably a global subscription i could do that would work better for this...
         }
 
         private void SlidingWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -111,6 +134,32 @@ namespace SlidingWindowControl
             }            
         }
 
+        private void SetFromMiddle(double falseCentre)
+        {
+            var proposedMinimum = falseCentre - (RangeWindowSize * 0.5);
+            var proposedMaximum = falseCentre + (RangeWindowSize * 0.5);
+
+            // Whoa this is dangerous, we need to handle the cases where the thumb is trying to go off the end of the slider.
+            if(proposedMaximum >= OverallMaximum)
+            {
+                // off the top
+                RangeMaximum = OverallMaximum;
+                RangeMinimum = RangeMaximum - RangeWindowSize;
+            }
+            else if(proposedMinimum <= OverallMinimum)
+            {
+                // off the bottom
+                RangeMinimum = OverallMinimum;
+                RangeMaximum = RangeMinimum + RangeWindowSize;
+            }
+            else
+            {
+                // regular assignment
+                RangeMinimum = proposedMinimum;
+                RangeMaximum = proposedMaximum;
+            }
+        }
+
         private void ShiftRange(int offset)
         {
             RangeMinimum += offset;
@@ -125,6 +174,30 @@ namespace SlidingWindowControl
         private void _downButton_Click(object sender, RoutedEventArgs e)
         {
             ShiftRange(-10);
+        }
+
+        private void _thumbGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            _isMouseDown = true;
+        }
+
+        private void _thumbGrid_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            _isMouseDown = false;
+        }
+        
+        private void DockPanel_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_isMouseDown)
+            {
+                // move the max and min around
+                var p = Mouse.GetPosition(this);
+                var xPos = Math.Min(ActualWidth, Math.Max(0, p.X));
+
+                var ratio = xPos / ActualWidth;
+                var middle = OverallMinimum + ((OverallMaximum - OverallMinimum) * ratio); // lerp to the middle in engine units
+                SetFromMiddle(middle);
+            }
         }
     }
 }
