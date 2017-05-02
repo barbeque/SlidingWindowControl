@@ -126,9 +126,6 @@ namespace SlidingWindowControl
                 var downWidthInUnits = Math.Min(maximumPossible, Math.Max(minimumPossible, RangeMinimum));
                 var downWidthInPercentage = downWidthInUnits / totalAvailableRange;
 
-                var upWidthInUnits = Math.Max(0, myTotalWidth - (thumbWidthPercentage + _downButton.Width));
-                var upWidthInPercentage = upWidthInUnits / totalAvailableRange;
-
                 _downButton.Width = downWidthInPercentage * myTotalWidth;
                 _thumbGrid.Width = thumbWidthPercentage * myTotalWidth;
             }            
@@ -185,6 +182,7 @@ namespace SlidingWindowControl
         private void _thumbGrid_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             _isMouseDown = false;
+            _thumbGrid.ReleaseMouseCapture();
         }
         
         private void DockPanel_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
