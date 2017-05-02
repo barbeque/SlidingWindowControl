@@ -179,6 +179,7 @@ namespace SlidingWindowControl
         private void _thumbGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             _isMouseDown = true;
+            _thumbGrid.CaptureMouse();
         }
 
         private void _thumbGrid_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
